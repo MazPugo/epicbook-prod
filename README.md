@@ -1,22 +1,8 @@
-epicbook-prod/
-├─ terraform/                 # AWS infrastructure
-├─ ansible/
-│  ├─ inventory.ini
-│  ├─ site.yml                # role orchestration
-│  ├─ vars/
-│  │  └─ web.yml
-│  └─ roles/
-│     ├─ app/                 # system updates, base packages, misc setup
-│     │  └─ tasks/main.yml
-│     ├─ nginx/               # install Nginx + serve from /var/www/epicbook
-│     │  ├─ tasks/main.yml
-│     │  └─ templates/epicbook.conf.j2
-│     └─ epicbook/            # clone repo + deploy Node app + systemd/PM2
-│        └─ tasks/main.yml
-└─ README.md
 
 
 EpicBook Production Deployment — Terraform + Ansible (AWS):
+
+
 
 This project automates the deployment of the EpicBook web application using:
 
