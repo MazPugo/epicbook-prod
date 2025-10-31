@@ -1,0 +1,13 @@
+
+- name: Validate nginx config
+  ansible.builtin.command: nginx -t
+  register: nginx_config_check
+  changed_when: false
+  failed_when: "'successful' not in nginx_config_check.stderr"
+
+- name: Restart nginx
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+  when: "'successful' in nginx_config_check.stderr"
+

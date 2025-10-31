@@ -1,0 +1,50 @@
+---
+# Install PyMySQL
+- name: Install PyMySQL
+  ansible.builtin.pip:
+    name: PyMySQL
+    state: present
+  tags: ['database']
+
+# Ensure MariaDB root access via socket
+- name: Ensure MariaDB root access via socket
+  community.mysql.mysql_user:
+    name: root
+    login_unix_socket: "{{ mysql_socket }}"
+    check_implicit_admin: true
+  tags: ['database']
+
+# Create application database
+- name: Create application database
+  community.mysql.mysql_db:
+    name: "{{ db_name }}"
+    state: present
+    login_unix_socket: "{{ mysql_socket }}"
+  tags: ['database']
+
+# Create application DB user
+- name: Create application database user
+  community.mysql.mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: "{{ db_name }}.*:ALL"
+    state: present
+    login_user: root
+    login_unix_socket: "{{ mysql_socket }}"
+  tags: ['database']
+
+# Copy SQL schema and seed file to server
+- name: Upload schema.sql
+  ansible.builtin.copy:
+    src: schema.sql
+    dest: /tmp/schema.sql
+    mode: '0644'
+  tags: ['database']
+
+# Execute schema & seed
+- name: Apply database schema and seed data
+  ansible.builtin.shell: |
+    mysql -u {{ db_user }} -p{{ db_password }} {{ db_name }} < /tmp/schema.sql
+  args:
+    executable: /bin/bash
+  tags: ['database']

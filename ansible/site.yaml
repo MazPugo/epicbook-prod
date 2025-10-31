@@ -1,0 +1,58 @@
+# -------------------------------
+# Setup Database on db host group
+# -------------------------------
+- name: Setup Database
+  hosts: db
+  become: true
+  vars_files:
+    - ../vars/env.yml
+  roles:
+    - role: database
+      tags: ['database']
+
+# -------------------------------
+# Deploy EpicBook Application on app host group
+# -------------------------------
+- name: Deploy EpicBook Application
+  hosts: app
+  become: true
+  vars_files:
+    - ../vars/env.yml
+    - ../vars/vault.yml
+
+  pre_tasks:
+    - name: Update system packages
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: dist
+        force_apt_get: yes
+
+    - name: Install required packages
+      ansible.builtin.apt:
+        name:
+          - git
+          - nodejs
+          - npm
+          - mariadb-server
+          - python3-pip
+        state: present
+      tags: ["packages"]
+
+  roles:
+    - role: app
+      tags: ['app']
+    - role: epicbook
+      tags: ['app']
+    - role: nginx
+      tags: ['nginx']
+
+  handlers:
+    - name: Restart epicbook
+      ansible.builtin.systemd:
+        name: epicbook
+        state: restarted
+
+    - name: Restart nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: restarted
