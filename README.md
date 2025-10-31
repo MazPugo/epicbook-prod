@@ -11,6 +11,7 @@ This project automates the deployment of the EpicBook web application using:
 - Ansible → Configure server & deploy the EpicBook Node.js app
 
 - Nginx → Reverse proxy to app running on port 8080
+- 
 
   | Layer             | Technology             |
 | ----------------- | ---------------------- |
@@ -20,6 +21,7 @@ This project automates the deployment of the EpicBook web application using:
 | Application       | Node.js (EpicBook App) |
 | Database          | MariaDB                |
 | Repository Source | GitHub Repo            |
+
 
 ✅ Features
 
